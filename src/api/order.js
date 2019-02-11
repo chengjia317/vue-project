@@ -1,4 +1,4 @@
-import axios from '@/util/axios'
+import axios from '@/utils/axios'
 
 // 创建订单
 export function createOrder(data) {

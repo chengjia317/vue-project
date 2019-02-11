@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import discount from './modules/discount'
 import account from './modules/account'
 import address from './modules/address'
-import good from './modules/good'
+import goods from './modules/goods'
 
 Vue.use(Vuex)
 
@@ -12,6 +12,6 @@ export default new Vuex.Store({
     discount,
     account,
     address,
-    good
+    goods
   }
 })

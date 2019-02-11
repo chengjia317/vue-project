@@ -1,0 +1,181 @@
+<template>
+  <div>
+    <com-tab-title title="订单详情"></com-tab-title>
+    <div class="wrapper">
+      <div class="status-wrapper flex-sb">
+        <span class="status">{{orderDetails.status | formatOrderStatus}}</span>
+        <div class="status-icon">
+          <!-- 待付款 -->
+          <img v-if="orderDetails.status === 'WAIT'" src="../../../assets/image/icon_my_payment_big.png" alt="">
+          <!-- 待发货 -->
+          <img v-if="orderDetails.status === 'PAID'" src="../../../assets/image/icon_my_deliver_big.png" alt="">
+          <!-- 待收货 -->
+          <img v-if="orderDetails.status === 'DELIVERED'" src="../../../assets/image/icon_my_receive_big.png" alt="">
+        </div>
+      </div>
+
+      <div class="details-wrapper">
+        <!-- <div class="periods-wrapper flex-sb" @click="periodsShow = true">
+          <span>查看每期详情</span>
+          <div class="periods">
+            <span>剩余5期</span>
+            <i class="op-icon-arrow"></i>
+          </div>
+        </div> -->
+
+        <div v-if="orderDetails.address" class="address-wrapper flex-sb">
+          <i class="op-icon-address"></i>
+          <div class="address-content">
+            <div class="flex-sb">
+              <span>收货人：{{orderDetails.address.recipient}}</span>
+              <span>{{orderDetails.address.phone}}</span>
+            </div>
+            <div class="address">收货地址：{{addressName}}</div>
+          </div>
+        </div>
+
+        <!-- TODO 快递信息 -->
+        <div v-if="orderDetails.status !== 'WAIT'" class="date-wrapper flex-sb">
+          <span>快递单号</span>
+          <span>{{orderDetails.waybill || '暂无'}}</span>
+        </div>
+      </div>
+
+      <goods :data="orderDetails" class="goods">
+        <div slot="header-right">创建时间 {{orderDetails.createAt | formatDate}}</div>
+        <div slot="discount" class="discount">
+          <div class="flex-sb">
+            <span>商品总价</span>
+            <span>¥{{orderDetails.totalAmount | toDecimal2}}</span>
+          </div>
+          <div class="flex-sb">
+            <span>优惠券抵扣</span>
+            <span>-¥{{orderDetails.couponAmount | toDecimal2}}</span>
+          </div>
+        </div>
+      </goods>
+
+      <button class="op-btn">联系客服</button>
+    </div>
+    <!-- 查看每期详情 -->
+    <periods-details :show.sync="periodsShow"></periods-details>
+  </div>
+</template>
+
+<script>
+import goods from '@/components/goods'
+import periodsDetails from '@/components/periodsDetails'
+import {getOrderDetails} from '@/api/order'
+export default {
+  components: {
+    goods,
+    periodsDetails
+  },
+
+  data () {
+    return {
+      id: Number(this.$route.params.id),
+      periodsShow: false,
+      orderDetails: {}
+    }
+  },
+
+  computed: {
+    addressName: function () {
+      return `${this.orderDetails.address.provinceName}${this.orderDetails.address.cityName}${this.orderDetails.address.areaName}${this.orderDetails.address.address}`
+    }
+  },
+
+  created () {
+    this.getOrderDetails()
+  },
+
+  methods: {
+    async getOrderDetails () {
+      this.$op.loading()
+      this.orderDetails = await getOrderDetails(this.id)
+      console.log('order details', this.orderDetails)
+      this.$toast.clear()
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.wrapper {
+  padding-top: 50px;
+}
+.status-wrapper {
+  padding: 0 60px 0 40px;
+  width: 100%;
+  height: 88px;
+  color: #fff;
+  background: #0E948A;
+  .status {
+    font-size: 20px;
+  }
+  .status-icon {
+    width: 49px;
+  }
+}
+@mixin base {
+  padding: 14px 20px;
+}
+.details-wrapper {
+  background: #fff;
+  .periods-wrapper {
+    font-size: 15px;
+    @include base;
+    .periods {
+      font-size: 12px;
+      color: #0E948A;
+      .op-icon-arrow {
+        margin-left: 10px;
+      }
+    }
+  }
+
+  .address-wrapper {
+    border-top: 1px solid #E6EAEE;
+    border-bottom: 1px solid #E6EAEE;
+    @include base;
+    .address {
+      margin-top: 6px;
+    }
+  }
+
+  .date-wrapper {
+    @include base;
+  }
+}
+.address-content {
+  flex: 1;
+  margin-left: 21px;
+}
+
+.goods {
+  margin: 10px 0;
+  .discount {
+    margin-bottom: 12px;
+    line-height: 24px;
+    color: #9B9B9B;
+  }
+  & /deep/ .price-wapper {
+    .price-unit {
+      color: #0E948A;
+    }
+    .price {
+      color: #0E948A;
+    }
+  }
+}
+
+// 联系客服
+.op-btn {
+  padding: 0 20px;
+  width: 100%;
+  font-size: 15px;
+  color: #000;
+  text-align: left;
+}
+</style>

@@ -1,11 +1,12 @@
-// 个人信息数据
 import {login, getProfile} from '@/api/account.js'
+import {wechatLogin} from '@/api/wechat'
 import { Toast } from 'vant'
 
 export default {
   state: {
     token: localStorage.getItem('token') || '',
     profile: localStorage.getItem('profile') || {}, // 个人信息
+    inviterId: Number(localStorage.getItem('inviterId')) || '', // 邀请用户
   },
 
   mutations: {
@@ -13,12 +14,16 @@ export default {
       localStorage.setItem('token', data)
       state.token = data
     },
-
+    
     GET_PROFILE (state, data) {
       localStorage.setItem('profile', JSON.stringify(data))
       state.profile = data
-    }
+    },
 
+    SET_INVITERID (state, inviterId) {
+      localStorage.setItem('inviterId', inviterId)
+      state.inviterId = Number(inviterId)
+    }
   },
 
   actions: {
@@ -47,6 +52,10 @@ export default {
       return getProfile().then(res => {
         commit('GET_PROFILE', res)
       })
+    },
+
+    setInviterId ({commit}, inviterId) {
+      commit('SET_INVITERID', inviterId)
     }
   }
 }

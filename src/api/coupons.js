@@ -1,4 +1,4 @@
-import axios from '@/util/axios'
+import axios from '@/utils/axios'
 
 /**
  * 获取我的全部优惠券

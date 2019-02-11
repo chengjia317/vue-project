@@ -1,4 +1,4 @@
-import axios from '@/util/axios'
+import axios from '@/utils/axios'
 /**
  * 用户登录
  * @param {Object} 登录信息

@@ -1,4 +1,4 @@
-import axios from '@/util/axios'
+import axios from '@/utils/axios'
 
 // 获取商品分类列表
 export function getCategories() {

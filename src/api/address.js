@@ -1,4 +1,4 @@
-import axios from '@/util/axios'
+import axios from '@/utils/axios'
 
 // 获取地址列表
 export function getAddresses () {

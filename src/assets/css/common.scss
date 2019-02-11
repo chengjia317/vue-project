@@ -1,0 +1,305 @@
+@import '~@/assets/css/_variables.scss';
+// 颜色
+.color-primary {
+  color: $color-primary;
+}
+input::input-placeholder{
+  color: rgba(255,255,255,.5);
+}
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: rgba(255,255,255,.5);
+}
+input::-moz-placeholder, textarea::-moz-placeholder {
+  color: rgba(255,255,255,.5);
+}
+input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+  color: rgba(255,255,255,.5);
+}
+
+// 按钮
+.op-btn {
+  width: 315px;
+  height: 50px;
+  line-height: 50px;
+  font-size: 14px;
+  color: $color-primary;
+  border-radius: 5px;
+  background: #fff;
+  border: none
+}
+
+.op-btn-check {
+  padding: 0 10px;
+  margin-right: 4px;
+  font-size: 12px;
+  background: #fff;
+  color: #0E948A;
+  border: 1px solid #0E948A;
+  border-radius: 2px;
+  text-align: center;
+}
+.op-btn-check.active {
+  color: #fff;
+  background: #0E948A;
+}
+
+.op-btn-primary {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  color: #fff;
+  font-size: 17px;
+  background: #0E948A;
+  border: 1px solid #05726A;
+  border-radius: 5px;
+}
+
+button:disabled {
+  opacity: .6;
+}
+
+.op-btn:disabled {
+  opacity: 1;
+  color: rgba(255, 255, 255, .5);
+  background: rgba(255, 255, 255, .15);
+}
+
+
+.op-btn-text {
+  background: none;
+  height: 24px;
+  line-height: 24px;
+  font-family: MicrosoftYaHei;
+  font-size: 12px;
+  color: #444;
+  border: 1px solid #444;
+  border-radius: 2px;
+}
+.op-btn-bottom {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 58px;
+  line-height: 58px;
+  font-size: 17px;
+  color: #fff;
+  background: #0E948A;
+}
+
+// 布局
+.flex-sb{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.flex-col-sb{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+img {
+  width: 100%;
+}
+
+// 字体
+.font-ps {
+  font-family: PingFangSC-Semibold;
+  font-weight: bold;
+}
+.font-10 {
+  display: inline-block;
+  font-size: 12px;
+  transform: scale(.9);
+}
+.font-9 {
+  display: inline-block;
+  font-size: 12px;
+  transform: scale(.8);
+}
+
+// 标签
+.op-tag {
+  margin-right: 8px;
+  height: 20px;
+  line-height: 20px;
+  padding: 0 6px;
+  background: rgba(14,148,138,.5);
+  color: #fff;
+  border-radius: 2px;
+}
+.page {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+}
+
+// 图标
+@mixin icon {
+  display: inline-block;
+  background-size: cover;
+}
+.op-icon-arrow {
+  width: 6px;
+  height: 10px;
+  background: url('~@/assets/image/icon_arrow.png');
+  @include icon;
+}
+.op-icon-arrow-yellow {
+  width: 4px;
+  height: 7px;
+  background: url('~@/assets/image/icon_arrow_yellow.png');
+  @include icon;
+}
+.op-icon-close {
+  width: 15px;
+  height: 15px;
+  background: url('~@/assets/image/icon_close.png');
+  @include icon;
+}
+.op-icon-clear {
+  width: 17px;
+  height: 16px;
+  background: url('~@/assets/image/icon_clear.png');
+  @include icon;
+}
+.op-icon-vip {
+  width: 20px;
+  height: 16px;
+  background: url('~@/assets/image/icon_vip.png');
+  vertical-align: sub;
+  @include icon;
+}
+.op-icon-buy {
+  width: 20px;
+  height: 16px;
+  background: url('~@/assets/image/icon_buy.png');
+  @include icon;
+}
+.op-icon-vip-green {
+  width: 20px;
+  height: 16px;
+  background: url('~@/assets/image/icon_vip_green.png');
+  vertical-align: sub;
+  @include icon;
+}
+.op-icon-notice {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background: url('~@/assets/image/icon_notice.png');
+  @include icon;
+}
+.op-icon-gift {
+  width: 18px;
+  height: 18px;
+  background: url('~@/assets/image/icon_gift.png');
+  @include icon;
+}
+.op-icon-add {
+  width: 18px;
+  height: 18px;
+  background: url('~@/assets/image/icon_add_white.png');
+  @include icon;
+}
+.op-icon-search {
+  width: 18px;
+  height: 18px;
+  background: url('~@/assets/image/icon_search.png');
+  @include icon;
+}
+.op-icon-address {
+  width: 18px;
+  height: 18px;
+  background: url('~@/assets/image/icon_address.png');
+  @include icon;
+}
+.op-icon-return {
+  width: 18px;
+  height: 18px;
+  background: url('~@/assets/image/icon_return.png');
+  @include icon;
+}
+.op-icon-share {
+  position: absolute;
+  top: 10px;
+  right: 30px;
+  width: 48px;
+  height: 48px;
+  background: url('~@/assets/image/icon_share.png');
+  @include icon;
+}
+
+.op-icon-num {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: inline-block;
+  color: #0E948A;
+  background: #fff;
+  padding: 0 3px;
+  height: 13px;
+  line-height: 13px;
+  border-radius: 50%;
+}
+
+// 滚动标签页
+.scrollWrapper {
+  opacity: 0;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  position: fixed;
+  overflow: hidden;
+}
+.scrollWrapper.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.no-data {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 10;
+}
+
+// 地址（我的地址|填写订单）
+.address-info {
+  .user {
+    font-family: PingFangSC-Semibold;
+    font-size: 15px;
+    color: #222;
+    .name {
+      margin-right: 30px;
+    }
+  }
+  .address {
+    margin: 6px 0 15px;
+    font-size: 12px;
+    color: #444;
+  }
+}

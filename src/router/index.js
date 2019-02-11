@@ -1,93 +1,88 @@
 import Vue from 'vue'
-import Router from 'vue-router'
+import VueRouter from 'vue-router'
+import store from '@/store'
+// 路由数据
+import routes from './frame'
+import {Toast} from 'vant'
 
-Vue.use(Router)
+import {getWechatApiConfig} from '@/api/wechat'
 
-export default new Router({
-  mode:'history',
-  routes: [
-    {
-      path: '/login',
-      name: 'Login',
-      component: ()=> import('@/pages/login/Login.vue')
-    },
-    {
-      path: '/home',
-      name: 'Home',
-      component: ()=> import('@/pages/home/Home.vue')
-    },
-    {
-      path:'/subscribe',
-      name:'Subscribe',
-      component: ()=> import('@/pages/subscribe/Subscribe.vue')
-    },
-    {
-      path:'/supply',
-      name:'Supply',
-      component: ()=> import('@/pages/supply/Supply.vue'),
-      redirect:'/supply/list',
-      children:[
-        {
-          path:'list/:page?',
-          name:'List_supply',
-          component: ()=> import('@/pages/supply/List-supply.vue')
-        },
-        {
-          path:'details/:id',
-          name:'Detail_supply',
-          component: ()=> import('@/pages/supply/Detail-supply.vue')
-        }
-      ]
-    },
-    {
-      path:'/me',
-      name:'Me',
-      component: ()=> import('@/pages/me/Me.vue')
-
-    },
-    {
-      path:'/me/notice',
-      name:'Me_notice',
-      component: ()=> import('@/pages/me/Notice.vue')
-    },
-    {
-      path:'/me/order/:page?',
-      name:'Me_Order',
-      component: ()=> import('@/pages/me/Order.vue')
-    },
-    {
-      path:'/me/order/detail/:id',
-      name:'Order_detail',
-      component: ()=> import('@/pages/me/Order-detail.vue')
-    },
-    {
-      path:'/me/discount/:page?',
-      name:'Me_discount',
-      component: ()=> import('@/pages/me/Discount.vue')
-    },
-    {
-      path:'/me/address',
-      name:'Me_address',
-      component: ()=> import('@/pages/me/Address.vue')
-    },
-    {
-      path:'/me/address/edit/:id?',
-      name:'Me_address_edit',
-      component: ()=> import('@/pages/me/Address-edit.vue')
-    },
-    {
-      path:'/me/invite',
-      name:'Me_invite',
-      component: ()=> import('@/pages/me/Invite.vue')
-    },
-    {
-      path:'/me/subs',
-      name:'Me_subs',
-      component: ()=> import('@/pages/me/Subs.vue')
-    },
-    {
-      path:'/',
-      redirect:'/home'
-    }
-  ]
+Vue.use(VueRouter)
+const router = new VueRouter({
+  mode: 'history',
+  routes,
 })
+
+// 验证目标路由是否需要权限验证
+router.beforeEach(async (to, from, next) => {
+  // 微信分享
+  try {
+    const wxConfigRouterNames = ['invite', 'supply_details', 'subscribe', 'my_order']
+    
+    // 邀请朋友
+    if (wxConfigRouterNames.indexOf(to.name) > -1) {
+      console.log('get wechat config')
+      const isIOS = function() {
+        var isIphone = navigator.userAgent.includes('iPhone')
+        var isIpad = navigator.userAgent.includes('iPad')
+        return isIphone || isIpad
+      }
+
+      if (!isIOS() || !Vue.prototype.$wx_config) {
+        console.log('start get wechat config')
+        let url = window.location.href
+        if (!isIOS()) { // 安卓取未来的页面
+          url = `${window.location.origin}${to.fullPath}`
+        }
+        const config = await getWechatApiConfig(url)
+        config.debug = true
+        console.log('config', config)
+        config.jsApiList = [
+          'onMenuShareTimeline',
+          'onMenuShareAppMessage',
+          'chooseWXPay',
+          'onMenuShareQQ',
+          'onMenuShareQZone',
+          'showOptionMenu',
+          'showAllNonBaseMenuItem'
+        ]
+        Vue.prototype.$wx_config = config
+      }
+    }
+  } catch (e) {
+    console.log(e)
+  }
+
+  // 存储邀请用户id
+  if (to.query.inviterId) {
+    store.dispatch('setInviterId', to.query.inviterId)
+  }
+
+  if (to.query.code) {
+    await store.dispatch('wechatLogin', to.query.code)
+    await store.dispatch('getProfile')
+    next()
+  }
+
+  if (to.matched.some(r => r.meta.requiresAuth)) {
+    const token = localStorage.getItem('token')
+    if (token) {
+      next()
+    } else {
+      // 未登录跳转到登录
+      Toast({
+        message: '您暂未登录，请授权登录',
+        duration: 2000
+      })
+      next({
+        name: 'my',
+        params: {redirect: from.fullPath},
+        replace: true
+      })
+    }
+  } else {
+    // 不需要身份校验直接通过
+    next()
+  }
+})
+export default router

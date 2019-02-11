@@ -1,37 +1,46 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import App from './App'
+import App from './App.vue'
 import router from './router'
+import 'babel-polyfill'
 import store from './store'
-import fastClick from 'fastclick'
-import 'styles/reset.css'
 
-// vant组件
-import { Area } from 'vant';
-Vue.use(Area);
 
-import { List } from 'vant';
-Vue.use(List);
+// UI组件
+import {Tabbar, TabbarItem } from 'vant'
+Vue.use(Tabbar).use(TabbarItem)
 
-import { Swipe, SwipeItem } from 'vant';
-Vue.use(Swipe).use(SwipeItem);
+import { Swipe, SwipeItem } from 'vant'
+Vue.use(Swipe).use(SwipeItem)
 
-import { Toast } from 'vant';
-Vue.use(Toast);
+import { Toast, Dialog } from 'vant'
+Vue.use(Toast).use(Dialog)
 
-Vue.config.productionTip = false
-fastClick.attach(document.body)
+import { Area } from 'vant'
+Vue.use(Area)
+
+import { List } from 'vant'
+Vue.use(List)
+
+import { Tab, Tabs } from 'vant'
+Vue.use(Tab).use(Tabs)
 
 // 公共方法
-import util from 'util'
-Vue.use(util)
+import utils from '@/utils'
+Vue.use(utils)
 
-/* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  router,
-  store,
-  components: { App },
-  template: '<App/>'
+import commonComponent from '@/components/'
+Vue.use(commonComponent)
+
+// 过滤器
+import filters from '@/utils/filters'
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
 })
+
+Vue.config.productionTip = false
+
+new Vue({
+  render: h => h(App),
+  router,
+  store
+}).$mount('#app')
