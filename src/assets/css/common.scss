@@ -3,6 +3,10 @@
 .color-primary {
   color: $color-primary;
 }
+.van-dialog__confirm, .van-dialog__confirm:active {
+  color: $color-primary;
+}
+
 input::input-placeholder{
   color: rgba(255,255,255,.5);
 }
@@ -15,6 +19,22 @@ input::-moz-placeholder, textarea::-moz-placeholder {
 }
 input:-ms-input-placeholder, textarea:-ms-input-placeholder {
   color: rgba(255,255,255,.5);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.is-pc {
+  margin: 0 auto;
+  height: 100%;
+  font-size: 100PX;
+  transform: translate3d(0,0,0);
+  overflow: hidden;
 }
 
 // 按钮
@@ -223,6 +243,12 @@ img {
   width: 18px;
   height: 18px;
   background: url('~@/assets/image/icon_return.png');
+  @include icon;
+}
+.op-icon-right {
+  width: 12px;
+  height: 12px;
+  background: url('~@/assets/image/icon_right.png');
   @include icon;
 }
 .op-icon-share {

@@ -6,7 +6,7 @@
       <div class="content">
         <template  v-if="dataList.length">
           <div class="address-wrapper" v-for="(item, index) in dataList" :key="index">
-            <div @click="addressId = item.id">
+            <div @click="handleSelecte(item.id)">
               <input v-if="canSelecte" hidden v-model="addressId" type="radio" :value="item.id">
               <div class="address-info">
                 <div class="user">
@@ -80,7 +80,8 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.scroll = new BScroll('.wrapper', {
-        click: true
+        click: true,
+        mouseWheel: true
       })
     })
   },
@@ -97,6 +98,11 @@ export default {
     handleDelete (id, index) {
       this.$store.dispatch('deleteAddress', id, index)
     },
+
+    handleSelecte (selecteId) {
+      this.addressId = selecteId
+      this.$router.go(-1)
+    }
   }
 }
 </script>

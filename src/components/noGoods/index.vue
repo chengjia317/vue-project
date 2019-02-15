@@ -21,9 +21,9 @@ export default {
 <style lang="scss" scoped>
 .nogoods-wrapper {
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .no-goods {
   color: rgba(34, 34, 34, .5);

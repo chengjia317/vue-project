@@ -3,17 +3,24 @@
     <div class="mask"></div>
       <div class="wrapper">
         <div class="header">
-          <h2>优惠券</h2>
+          <h2>现金券</h2>
           <i @click="handleClose" class="op-icon-close"></i>
         </div>
         <div ref="content" class="content">
           <div>
-            <discount :type="1" v-for="(item, index) in dataList" :key="item.id" :data="item">
-              <button v-if="!item.isSelected" class="op-btn-text active" @click="handleUse(index)">使用</button>
-              <button v-if="item.isSelected" class="op-btn-text" @click="handleCancel(index)">取消</button>
+            <discount class="discount-wrapper" v-for="(item, index) in dataList" :type="1" :data="item" :key="item.id" @click.native="handleUse(index, item.isSelected)">
+              <div class="radio-wrapper">
+                <div class="radio-checked" v-if="item.isSelected">
+                  <img src="../../assets/image/icon_radio_checked.png">
+                </div>
+                <div class="radio" v-else>
+                  <img src="../../assets/image/icon_radio.png">
+                </div>
+              </div>
             </discount>
           </div>
         </div>
+        <button class="op-btn-primary" @click="handleConfirm">确认使用</button>
       </div>
   </div>
 </template>
@@ -42,9 +49,14 @@ export default {
     show () {
       if (this.show) {
         this.$nextTick(() => {
-          this.scroll = new BScroll(this.$refs.content, {
-            click: true,
-          })
+          if (!this.scroll) {
+            this.scroll = new BScroll(this.$refs.content, {
+              click: true,
+              mouseWheel: true
+            })
+          } else {
+            this.scroll.refresh()
+          }
         })
       }
     },
@@ -64,12 +76,18 @@ export default {
   },
 
   methods: {
-    handleUse (index) {
-      this.$store.commit('DISCOUNT_SELECTED', index)
+    handleUse (index, isSelected) {
+      console.log(index, isSelected)
+      if (isSelected) {
+        this.$store.commit('DISCOUNT_CANCEL', index)
+      } else {
+        this.$store.commit('DISCOUNT_SELECTED', index)
+      }
     },
 
-    handleCancel (index) {
-      this.$store.commit('DISCOUNT_CANCEL', index)
+    handleConfirm () {
+      this.$store.commit('DISCOUNT_CONFIRM')
+      this.handleClose()
     },
 
     handleClose () {
@@ -80,6 +98,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.radio {
+  margin-right: 8px;
+  width: 16px;
+}
+.radio-checked {
+  margin-right: 0px;
+  width: 24px;
+}
+.discount-wrapper /deep/ .discount {
+  margin-right: 2px;
+}
+
 .wrapper {
   position: fixed;
   bottom: 0;
@@ -103,7 +133,7 @@ export default {
   }
 }
 .content {
-  height: 400px;
+  height: 300px;
   overflow: hidden;
 }
 .op-btn-text {

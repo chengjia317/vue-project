@@ -32,7 +32,6 @@
           </div>
         </div>
 
-        <!-- TODO 快递信息 -->
         <div v-if="orderDetails.status !== 'WAIT'" class="date-wrapper flex-sb">
           <span>快递单号</span>
           <span>{{orderDetails.waybill || '暂无'}}</span>
@@ -49,7 +48,7 @@
         </div>
       </subscribeGoods>
 
-      <button class="op-btn">联系客服</button>
+      <button class="op-btn" @click="handelService">联系客服</button>
     </div>
     <!-- 查看每期详情 -->
     <periods-details :show.sync="periodsShow"></periods-details>
@@ -78,6 +77,10 @@ export default {
     addressName: function () {
       const address = this.orderDetails.address
       return `${address.provinceName}${address.cityName}${address.areaName}${address.address}`
+    },
+
+    profile: function () {
+      return this.$store.state.account.profile
     }
   },
 
@@ -91,7 +94,18 @@ export default {
       this.orderDetails = await getSubscribeDetails(this.id)
       console.log('subscribe details', this.orderDetails)
       this.$toast.clear()
-    }
+    },
+
+    handelService () {
+      _MEIQIA('showPanel')
+      _MEIQIA('metadata', {
+        orderId: this.id,
+        userId: this.profile.id,
+        vip: this.profile.vip,
+        name: this.profile.nickname,
+        tel: this.profile.phone,
+      })
+    },
   }
 }
 </script>

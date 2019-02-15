@@ -8,6 +8,7 @@
           <i @click="handleClose" class="op-icon-close"></i>
         </div>
         <div class="content">
+          
             <div class="address-wrapper">
               <!-- 存在地址 -->
               <template v-if="addresses">
@@ -28,12 +29,12 @@
               <i class="icon-address-border"></i>
             </div>
 
-          <!-- 优惠券-单个商品时渲染 -->
-          <div v-if="!profile.vip && path !== '/subscribe'" class="discount-wrapper flex-sb">
-            <span>优惠券</span>
+          <!-- 现金券-[单个商品|订阅]时渲染 -->
+          <div v-if="discount" class="discount-wrapper flex-sb">
+            <span>现金券</span>
             <div class="discount">
-              <template v-for="(item, index) in discount">
-                <span v-if="item.isSelected" :key="index"  class="icon-discount">{{item.value | toDecimal0}}元优惠券</span>
+              <template v-for="(item, index) in discountConfirmList">
+                <span v-if="item.isSelected" :key="index"  class="icon-discount">{{item.value | toDecimal0}}元现金券</span>
               </template>
             </div>
 
@@ -42,7 +43,7 @@
               <i class="op-icon-arrow"></i>
             </div>
 
-            <div v-else class="discount-count">暂无可用优惠券</div>
+            <div v-else class="discount-count">暂无可用现金券</div>
           </div>
 
           <!-- 数量-单个商品时渲染 -->
@@ -76,7 +77,6 @@
 import stepper from '@/components/stepper'
 import {createOrder, createSubscribe, createPayOrder, createPaySubscribes} from '@/api/order'
 import {wechatPay} from '@/api/wechat'
-import wx from 'weixin-js-sdk'
 
 export default {
   components: {
@@ -127,8 +127,14 @@ export default {
       return this.$store.state.goods.details
     },
 
+    // 获取全部可用现金券
     discount () {
       return this.$store.state.discount.dataList
+    },
+
+    // 获取选中的可用现金券
+    discountConfirmList () {
+      return this.$store.state.discount.confirmList
     },
 
     profile () {
@@ -136,25 +142,34 @@ export default {
     },
 
     moneyNeedPay () {
+      let price
+      // 订阅商品
       if (this.path === '/subscribe') {
-        return 15000
+        price = 15000
       } else {
-        // 是否为会员
+        // 单件商品 | 是否为会员
         let itemPrice = this.profile.vip ? this.details.vipPrice : this.details.price
-        let price = itemPrice * this.details.count
-        let discount = this.discount.find(item => {
-          return item.isSelected
-        })
-        return discount ? price - discount.value : price
+        price = itemPrice * this.details.count
       }
+      this.discountConfirmList.forEach(item => {
+        if (item.isSelected) {
+          price = price - item.value
+        }
+      })
+      if (price < 0) {
+        price = 0
+      }
+      return price
+    }
+  },
+
+  created () {
+    if (this.$store.state.account.token) {
+      this.$store.dispatch('getDiscountData')
     }
   },
 
   methods: {
-    discountShow () {
-      this.$emit('discountOpen')
-    },
-    
     /**
      * 发起订阅
      * @return 订单详情
@@ -162,7 +177,8 @@ export default {
     async createSubscribe () {
       let subscribeForm = {
         'type': "NORMAL",
-        'addressId': this.addresses.id
+        'addressId': this.addresses.id,
+        'couponFlowIds': this.$store.getters.confirmListIds
       }
       this.$op.loading()
       const orderDetails = await createSubscribe(subscribeForm)
@@ -188,16 +204,9 @@ export default {
             'count': this.details.count
         }], // 属性
         'addressId': this.addresses.id, // 收货地址
+        'couponFlowIds': this.$store.getters.confirmListIds, // 现金券
       }
-      const coupon = this.discount.find(item => {
-        return item.isSelected
-      })
-      // TODO 优惠券多选
-      if (coupon) {
-        let couponList = []
-        this.orderInfo.couponFlowIds.push(couponList)
-      }
-
+      
       this.$op.loading()
       console.log('orderInfo', this.orderInfo)
       const orderDetails = await createOrder(this.orderInfo)
@@ -222,34 +231,38 @@ export default {
       } else { // 单件商品
         orderDetails = await this.createOrder()
       }
-      console.log(orderDetails)
+      console.log('orderDetails', orderDetails)
       this.$emit('update:show', false)
       this.$toast.clear()
-      
+
       // 发起微信支付
       this.$op.isWeChatApplet().then(async res => {
+        let data = {}
+
+        if (this.path === '/subscribe') { // 订阅
+          data = await createPaySubscribes(orderDetails.id)
+        } else {
+          data = await createPayOrder(orderDetails.id)
+        }
+        // 支付金额 = 0元
+        if (data === '') {
+          this.$toast('下单成功')
+          return
+        }
+        // 支付金额 > 0元
         if (!res) {
           // 微信环境
-          let data = {}
-
-          if (this.path === '/subscribe') { // 订阅
-            data = await createPaySubscribes(orderDetails.id)
-          } else {
-            data = await createPayOrder(orderDetails.id)
-          }
-
           wechatPay({
             ...data,
-            debug: true,
+            debug: false,
             success: () => {
               this.$toast('支付成功')
             }
           })
         } else {
           // 小程序环境
-          wx.miniProgram.postMessage({
-            data: { 'type': 'pay' } 
-          })
+          let payParams = encodeURIComponent(JSON.stringify(data))
+          wx.miniProgram.navigateTo({url: `/pages/payment/payment?params=${payParams}`})
         }
       })
     },
@@ -335,7 +348,7 @@ export default {
   background-size: cover;
 }
 
-// 优惠券
+// 现金券
 .discount-wrapper {
   margin: 10px 0;
   padding: 15px 10px 15px 15px;
@@ -407,6 +420,9 @@ export default {
     flex: 1;
     font-size: 17px;
     background: #0E948A;
+    &:disabled {
+      background: rgba($color: #0E948A, $alpha: .6)
+    }
   }
 }
 </style>

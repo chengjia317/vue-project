@@ -17,11 +17,11 @@
             <span class="op-tag"><i class="font-10">会员价¥{{goodsDetails.vipPrice | toDecimal2}}</i></span>
           </div>
 
-          <div v-if="!profile.vip" class="details-item">
-            <span class="name">优惠券</span>
+          <div class="details-item">
+            <span class="name">现金券</span>
             <div class="value" style="margin: 0 -0.1rem -0.1rem 0">
-              <template v-for="(item, index) in discountList">
-                <span v-if="item.isSelected" :key="index"  class="icon-discount">¥{{item.value | toDecimal0}}优惠券</span>
+              <template v-for="(item, index) in discountConfirmList">
+                <span v-if="item.isSelected" :key="index"  class="icon-discount">¥{{item.value | toDecimal0}}现金券</span>
               </template>
             </div>
 
@@ -29,7 +29,7 @@
               {{discountList.length}}张可用
               <i class="op-icon-arrow"></i>
             </div>
-            <div v-else class="discount-count">暂无可用优惠券</div>
+            <div v-else class="discount-count">暂无可用现金券</div>
           </div>
 
           <!-- 属性 -->
@@ -72,7 +72,7 @@
       </button>
     </div>
 
-    <!-- 可用优惠券列表 -->
+    <!-- 可用现金券列表 -->
     <discount-details :show.sync="discountShow"></discount-details>
 
     <!-- 填写订单 -->
@@ -106,11 +106,21 @@ export default {
     discountList () {
       return this.$store.state.discount.dataList
     },
+
+    discountConfirmList () {
+      return this.$store.state.discount.confirmList
+    },
     
     profile () {
       return this.$store.state.account.profile
     }
 
+  },
+
+  // 清空选中的现金券信息
+  beforeRouteLeave (to, from, next) {
+    this.$store.commit("DISCOUNT_CLEAR")
+    next()
   },
 
   created () {
@@ -124,6 +134,7 @@ export default {
     this.$nextTick(() => {
       this.scroll = new BScroll('.wrapper', {
         click: true,
+        mouseWheel: true
       })
     })
   },
@@ -228,7 +239,7 @@ export default {
   }
 
 }
-// 优惠券
+// 现金券
 .icon-discount {
   display: inline-block;
   margin: 0 0.1rem 0.1rem 0;

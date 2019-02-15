@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div :class="['wrapper', {'is-weapp': isapp}]">
     <div>
       <div class="section1">
         <div class="img"><img src="../../assets/image/index0.png" alt=""></div>
@@ -64,11 +64,36 @@
 <script>
 import BScroll from "better-scroll"
 export default {
+  data () {
+    return {
+      isapp: false
+    }
+  },
+
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (to.query.authInfo) {
+        let authInfo = to.query.authInfo
+        authInfo = JSON.parse(decodeURIComponent(authInfo))
+        // Save auth information
+        // authInfo={"token": "111", "userInfo": {"name":"22"}}
+        vm.$store.commit('LOGIN', authInfo.token)
+        vm.$store.commit('GET_PROFILE', authInfo.userInfo)
+      }
+    })
+  },
+
   mounted () {
+    this.$op.isWeChatApplet().then(async res => {
+      this.isapp = res
+    })
     this.$nextTick(() => {
-      this.scroll = new BScroll('.wrapper', {
-        click: true
-      })
+      setTimeout(() => {
+        this.scroll = new BScroll('.wrapper', {
+          click: true,
+          mouseWheel: true
+        })
+      }, 0)
     })
   },
 
@@ -83,6 +108,10 @@ export default {
   position: fixed;
   top: 0;
   bottom: 50px;
+  overflow: hidden;
+}
+.wrapper.is-weapp {
+  bottom: 84px;
 }
 .content {
   text-align: center;

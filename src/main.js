@@ -18,8 +18,8 @@ Vue.use(Toast).use(Dialog)
 import { Area } from 'vant'
 Vue.use(Area)
 
-import { List } from 'vant'
-Vue.use(List)
+import { List, PullRefresh} from 'vant'
+Vue.use(List).use(PullRefresh)
 
 import { Tab, Tabs } from 'vant'
 Vue.use(Tab).use(Tabs)

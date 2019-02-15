@@ -1,21 +1,32 @@
 <template>
   <div id="app">
-    <keep-alive>
-      <router-view v-if="this.$route.meta.keepAlive"></router-view>
-    </keep-alive>
-    <router-view v-if="!this.$route.meta.keepAlive"></router-view>
-
-    <tabbar v-show="this.$route.meta.showTab"></tabbar>
+    <!-- <div class="inner"> -->
+      <keep-alive>
+        <router-view v-if="this.$route.meta.keepAlive"></router-view>
+      </keep-alive>
+      <router-view v-if="!this.$route.meta.keepAlive"></router-view>
+      
+      <tabbar v-show="this.$route.meta.showTab"></tabbar>
+    <!-- </div> -->
   </div>
 </template>
 
 <script>
+import BScroll from 'better-scroll'
 import tabbar from '@/components/tabbar/'
 export default {
   name: 'app',
   components: {
     tabbar
   },
+
+  mounted () {
+    // new BScroll('#app', {
+    //   scrollY: true,
+    //   click: true,
+    //   bounce: false,
+    // })
+  }
 }
 </script>
 
@@ -24,6 +35,12 @@ export default {
 @import '~@/assets/css/common.scss';
 html, body{
   width: 100%;
+  height: 100%;
+}
+body {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.inner {
   height: 100%;
 }
 #app {

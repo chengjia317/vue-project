@@ -1,5 +1,5 @@
 <template>
-  <van-tabbar v-model="active">
+  <van-tabbar :class="isapp ? 'is-weapp': ''" v-model="active">
     <van-tabbar-item icon="home-o" to='/index'>
       <span>使命</span>
       <img
@@ -51,8 +51,15 @@ export default {
       icon4: {
         normal: require("../../assets/image/tabbar_4.png"),
         active: require('../../assets/image/tabbar_4_active.png')
-      }
+      },
+      isapp: false,
     }
+  },
+
+  mounted () {
+    this.$op.isWeChatApplet().then(async res => {
+      this.isapp = res
+    })
   },
 
   watch:{
@@ -74,8 +81,31 @@ export default {
 
 <style lang="scss" scoped>
 .van-tabbar {
+  height: 50px;
+  margin-bottom: env(safe-area-inset-bottom);
   box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
 }
+.van-tabbar::after {
+  content: '';
+  position: fixed;
+  z-index: 10;
+  top: initial;
+  left: 0;
+  right: 0;
+  transform: initial;
+  bottom: 0px;
+  width: 100%;
+  border: none;
+  height: env(safe-area-inset-bottom);
+  background: #fff;
+}
+.van-tabbar.is-weapp {
+  margin-bottom: 34px;
+}
+.van-tabbar.is-weapp::after {
+  height: 34px!important;
+}
+
 .van-tabbar-item {
   color: #909090;
   & /deep/ .van-tabbar-item__text {

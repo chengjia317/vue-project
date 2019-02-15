@@ -1,5 +1,5 @@
 <template>
-  <div class="outer">
+  <div :class="['outer', {'is-weapp': isapp}]">
     <div>
       <div class="header">
         <div class="user flex-sb">
@@ -95,7 +95,7 @@
               <div class="icon">
                 <img src="../../assets/image/icon_my_list3.png" alt="">
               </div>
-              <span class="name">我的优惠券</span>
+              <span class="name">我的现金券</span>
             </div>
             <div>
               <i class="op-icon-arrow"></i>
@@ -112,21 +112,22 @@
               <i class="op-icon-arrow"></i>
             </div>
           </router-link>
-          <router-link to="" tag="li">
+          <li @click="handelService">
             <div>
               <div class="icon">
                 <img src="../../assets/image/icon_my_list5.png" alt="">
               </div>
-              <span class="name">联系客服</span>
+              <span class="name" >联系客服</span>
             </div>
             <div>
               <i class="op-icon-arrow"></i>
             </div>
-          </router-link>
+          </li>
         </ul>
       </div>
-      <div v-if="!token" class="btn-wrapper">
-        <button class="op-btn-primary" @click="wechatLogin">授权登录</button>
+      <div class="btn-wrapper">
+        <button v-if="!token" class="op-btn-primary" @click="wechatLogin">授权登录</button>
+        <button v-else class="op-btn" @click="loginOut">退出登录</button>
       </div>
     </div>
   </div>
@@ -136,13 +137,13 @@
 import BScroll from 'better-scroll'
 import {getNewMessages} from '@/api/message'
 import {getWechatLogin} from '@/api/wechat'
-import wx from 'weixin-js-sdk'
 
 export default {
   data () {
     return {
       isGetProfile : false,
       message: 0,
+      isapp: false,
     }
   },
 
@@ -175,10 +176,18 @@ export default {
   },
 
   mounted () {
+    this.$op.isWeChatApplet().then(async res => {
+      this.isapp = res
+    })
     if (!this.scroll) {
-      this.scroll = new BScroll('.outer', {
-        click: true
-      })
+      setTimeout(() => {
+        this.scroll = new BScroll('.outer', {
+          click: true,
+          mouseWheel: true
+        })
+      }, 0)
+    } else {
+      this.scroll.refresh()
     }
   },
 
@@ -199,13 +208,36 @@ export default {
           // 微信环境
           getWechatLogin()
         } else {
-          // 小程序环境
-          wx.miniProgram.postMessage({
-            data: { 'type': 'auth' } 
-          })
+          wx.miniProgram.navigateTo({url: '/pages/auth/auth'})
         }
+      }).catch(err => {
+        console.error(err)
       })
     },
+
+    handelService () {
+      this.$op.isWeChatApplet().then(res => {
+        if (!res) {
+          // 微信环境
+          _MEIQIA('showPanel')
+          _MEIQIA('metadata', {
+            userid: this.profile.id,
+            vip: this.profile.vip,
+            name: this.profile.nickname,
+            tel: this.profile.phone,
+          })
+        } else {
+          wx.miniProgram.navigateTo({url: '/pages/service/service'})
+        }
+      }).catch(err => {
+        console.error(err)
+      })
+    },
+
+    loginOut () {
+      this.$store.dispatch('logout')
+      this.message = 0
+    }
   }
 }
 </script>
@@ -216,6 +248,9 @@ export default {
   position: fixed;
   top: 0;
   bottom: 50px;
+}
+.outer.is-weapp {
+  bottom: 84px;
 }
 .header {
   position: relative;

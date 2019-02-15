@@ -12,7 +12,7 @@
 
 <script>
 import goods from '../goods'
-import {createPayOrder} from '@/api/order'
+import {createPayOrder, closeOrder} from '@/api/order'
 import {wechatPay} from '@/api/wechat'
 import wx from 'weixin-js-sdk'
 export default {
@@ -24,19 +24,11 @@ export default {
     data: {
       type: Object,
       required: true
-    }
   },
 
-  computed: {
-    orderInfo: function () {
-      return {
-        'items': [{
-          'itemId': this.data.items[0].item.id,
-          'propertyValueId': this.data.items[0].item.property.id,
-          'count': this.data.items[0].count
-        }], // 属性
-        'addressId': this.data.address.id, // 收货地址
-      }
+    index: {
+      type: Number,
+      required: true
     }
   },
   
@@ -47,6 +39,16 @@ export default {
 
   methods: {
     handleCancel () {
+      this.$dialog.confirm({
+        message: '确认取消订单?'
+      }).then(async () => {
+        this.$op.loading()
+        await closeOrder(this.data.id)
+        this.$emit('success', this.index, 'CLOSED')
+        this.$toast('取消订单成功')
+      }).catch(() => {
+        // on cancel
+      })
 
     },
 
@@ -59,9 +61,10 @@ export default {
 
           wechatPay({
             ...data,
-            debug: true,
+            debug: false,
             success: () => {
               this.$toast('支付成功')
+              this.$emit('success', this.index, 'PAID')
             }
           })
         } else {

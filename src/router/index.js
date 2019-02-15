@@ -17,7 +17,7 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
   // 微信分享
   try {
-    const wxConfigRouterNames = ['invite', 'supply_details', 'subscribe', 'my_order']
+    const wxConfigRouterNames = ['index', 'invite', 'supply_details', 'subscribe', 'my_order']
     
     // 邀请朋友
     if (wxConfigRouterNames.indexOf(to.name) > -1) {
@@ -27,7 +27,6 @@ router.beforeEach(async (to, from, next) => {
         var isIpad = navigator.userAgent.includes('iPad')
         return isIphone || isIpad
       }
-
       if (!isIOS() || !Vue.prototype.$wx_config) {
         console.log('start get wechat config')
         let url = window.location.href
@@ -35,16 +34,12 @@ router.beforeEach(async (to, from, next) => {
           url = `${window.location.origin}${to.fullPath}`
         }
         const config = await getWechatApiConfig(url)
-        config.debug = true
+        config.debug = false
         console.log('config', config)
         config.jsApiList = [
           'onMenuShareTimeline',
           'onMenuShareAppMessage',
           'chooseWXPay',
-          'onMenuShareQQ',
-          'onMenuShareQZone',
-          'showOptionMenu',
-          'showAllNonBaseMenuItem'
         ]
         Vue.prototype.$wx_config = config
       }

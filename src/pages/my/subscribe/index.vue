@@ -39,8 +39,11 @@ export default {
   },
 
   mounted () {
-    this.scroll = new BScroll('.wrapper', {
-      click: true
+    this.$nextTick(() => {
+      this.scroll = new BScroll('.wrapper', {
+        click: true,
+        mouseWheel: true
+      })
     })
   }
 }

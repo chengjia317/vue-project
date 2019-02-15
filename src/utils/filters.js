@@ -21,8 +21,18 @@ function toDecimal2 (x) {
 export default {
   // 格式化金钱
   'toDecimal2': toDecimal2,
+  /**
+   * 格式化现金券
+   * 3000 -> 30
+   * 3003 -> 30.03
+   */
   'toDecimal0': (x) => {
-    return (x / 100).toFixed()
+    let price = toDecimal2(x)
+    if(price % 1 === 0) {
+      price = parseInt(price)
+    }
+    return price
+    // return (x / 100).toFixed()
   },
   /**
    * 截取价格小数点前

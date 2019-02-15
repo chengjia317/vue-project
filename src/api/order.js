@@ -9,11 +9,19 @@ export function createOrder(data) {
   })
 }
 
+// 取消订单
+export function closeOrder(id) {
+  return axios({
+    url: `/api/orders/${id}/close`,
+    method: 'post',
+  })
+}
+
 // 发起微信支付-订单
 export function createPayOrder(id) {
   return axios({
     url: `/api/wechat/pay/orders/${id}`,
-    method: 'post',
+    method: 'post'
   })
 }
 
@@ -21,7 +29,7 @@ export function createPayOrder(id) {
 export function createPaySubscribes(id) {
   return axios({
     url: `/api/wechat/pay/subscribes/${id}`,
-    method: 'post',
+    method: 'post'
   })
 }
 

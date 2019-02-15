@@ -1,15 +1,18 @@
 <template>
-  <div :class="discountClass">
-    <i v-if="type === 2" class="icon-used">
-    </i>
-    <div class="price">
-      <i class="unit">¥</i>{{data.value | toDecimal0}}
-    </div>
-    <div class="content flex-col-sb">
-      <div>{{data.name}}</div>
-      <div class="flex-sb">
-        <div>{{data.startTime | formatDatePoint}} - {{data.endTime | formatDatePoint}}</div>
-        <slot></slot>
+  <div class="flex-sb">
+    <slot></slot>
+    <div :class="discountClass">
+      <i v-if="type === 2" class="icon-used">
+      </i>
+      <div class="price">
+        <i class="unit">¥</i>{{data.value | toDecimal0}}
+      </div>
+      <div class="content flex-sb">
+        <div>无门槛现金使用券</div>
+        <!-- <div>{{data.name}}</div>
+        <div class="flex-sb">
+          <div>{{data.startTime | formatDatePoint}} - {{data.endTime | formatDatePoint}}</div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -18,7 +21,7 @@
 <script>
 export default {
   /**
-   * 优惠券类型 1: 未使用 | 2: 已使用 3: 已过期
+   * 现金券类型 1: 未使用 | 2: 已使用 3: 已过期
    */
   props: {
     type: {
@@ -68,7 +71,7 @@ export default {
   width: 344px;
   height: 93px;
   background-size: cover;
-  font-size: 12px;
+  // font-size: 12px;
   color: #9B9B9B;
   box-shadow: 0px 2px 10px -7px #000;
   .price {

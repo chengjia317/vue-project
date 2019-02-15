@@ -1,12 +1,15 @@
 <template>
-  <div>
+  <div style="height: 100%">
     <com-tab-title title="我的订单"></com-tab-title>
 
     <top-tab class="tab" :data="tabList" :active.sync="selectedIndex" @change="changeTopTab"></top-tab>
     
+    <div class="btn-wrapper">
+      <router-link :to="{name: 'my_subscribe'}" class='op-btn-text' tag="button"><i class="op-icon-right"></i>查看订阅订单</router-link>
+    </div>
+
     <div class="wrapper" v-for="(tab, tabIndex) in tabList" :key="tabIndex" v-show="tabIndex === selectedIndex">
       <van-list
-        @touchmove.prevent
         v-if="ordersList[tabIndex].length"
         class="content"
         v-model="loading"
@@ -14,10 +17,10 @@
         finished-text="没有更多了"
         @load="getOrder">
         <div class="order-list">
-          <order :data="item" v-for="(item, index) in ordersList[tabIndex]" :key="index"></order>
+          <order :data="item" :index="index" v-for="(item, index) in ordersList[tabIndex]" :key="index" @success='handelSuccess'></order>
         </div>
       </van-list>
-
+      
       <div v-else class="no-data">暂无订单</div>
     </div>
   </div>
@@ -113,10 +116,12 @@ export default {
       
       const searchForm = Object.assign({}, this.form)
       searchForm.page = this.pageList[this.selectedIndex].page
+      if (searchForm.page === 0) {
+        this.$set(this.ordersList, this.selectedIndex, [])
+      }
       
       const data = await getOrders(this.$op.formatSearchData(searchForm))
       this.loading = false
-
       this.ordersList[this.selectedIndex].push(...data.results)
 
       const total = data.total // 当前状态订单总数
@@ -135,27 +140,59 @@ export default {
     changeTopTab (index) {
       this.selectedIndex = index
       this.$router.replace({name: 'my_order', params: {type: index}})
-      // 自动加载第一页数据
-      if (this.pageList[this.selectedIndex].page === 0) {
-        this.getOrder()
-      }
+      this.pageList[this.selectedIndex].page = 0
+      this.getOrder()
     },
+
+    // 取消订单成功|支付成功回调
+    handelSuccess (index, status) {
+      if (this.selectedIndex === 1) {
+        this.ordersList[this.selectedIndex].splice(index, 1)
+      } else {
+        this.$set(this.ordersList[this.selectedIndex][index], 'status', status)
+      }
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.no-data {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin-top: 40px;
+}
+.btn-wrapper {
+  position: fixed;
+  left: 10px;
+  right: 10px;
+  height: 40px;
+  top: 90px;
+  z-index: 9;
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+  background: #f6f8f9;
+}
+.op-btn-text {
+  height: auto;
+  border: none;
+}
+.op-icon-right {
+  margin-right: 4px;
+}
 .tab {
   position: fixed;
   top: 50px;
   width: 100%;
+  z-index: 9;
 }
 .wrapper {
-  width: 100%;
-  position: fixed;
-  top: 90px;
-  bottom: 0;
-  overflow: auto;
+  min-height: 100%;
+  background: #f6f8f9;
+  padding-top: 120px;
 }
 .tab {
   position: fixed;
@@ -164,6 +201,7 @@ export default {
 }
 .order-list {
   padding: 10px;
+  padding-bottom: 0;
 }
 
 .status {

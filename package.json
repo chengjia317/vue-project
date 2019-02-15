@@ -36,6 +36,10 @@
     "weixin-js-sdk": "^1.4.0-test"
   },
   "eslintConfig": {
+    "globals": {
+      "wx": true,
+      "_MEIQIA": true
+    },
     "root": true,
     "env": {
       "node": true

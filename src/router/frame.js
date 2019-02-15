@@ -4,12 +4,12 @@ export default [
     redirect: '/index',
   },
   // 登录
-  // {
-  //   path: '/login',
-  //   name: 'login',
-  //   component: () => import('@/pages/login/index.vue'),
-  //   meta: {showTab: false, keepAlive: false, requiresAuth: false}
-  // },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/pages/login/index.vue'),
+    meta: {showTab: false, keepAlive: false, requiresAuth: false}
+  },
   // 使命
   {
     path: '/index',
@@ -57,7 +57,7 @@ export default [
     path: '/my/notice',
     name: 'my_notice',
     component: () => import('@/pages/my/notice/index.vue'),
-    meta: {showTab: false, keepAlive: true, requiresAuth: true}
+    meta: {showTab: false, keepAlive: false, requiresAuth: true}
   },
   // 我的订单
   {
@@ -77,13 +77,13 @@ export default [
     path: '/my/subscribe',
     name: 'my_subscribe',
     component: () => import('@/pages/my/subscribe/index.vue'),
-    meta: {showTab: false, keepAlive: true, requiresAuth: true}
+    meta: {showTab: false, keepAlive: false, requiresAuth: true}
   },
   {
     path: '/my/subscribe/list/:id?',
     name: 'my_subscribe_list',
     component: () => import('@/pages/my/subscribe/list.vue'),
-    meta: {showTab: false, keepAlive: true, requiresAuth: true}
+    meta: {showTab: false, keepAlive: false, requiresAuth: true}
   },
   {
     path: '/my/subscribe_details/:id?',
@@ -91,12 +91,12 @@ export default [
     component: () => import('@/pages/my/subscribe/details.vue'),
     meta: {showTab: false, keepAlive: false, requiresAuth: true}
   },
-  // 我的优惠券
+  // 我的现金券
   {
     path: '/my/discount/:type?',
     name: 'my_discount',
     component: () => import('@/pages/my/discount/index.vue'),
-    meta: {showTab: false, keepAlive: true, requiresAuth: true}
+    meta: {showTab: false, keepAlive: false, requiresAuth: false}
   },
   // 我的地址
   {

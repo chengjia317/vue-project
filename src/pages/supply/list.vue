@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%">
     <div class="header">
       <search v-model="form.keyword" placeholder="搜搜Shavedog精选补给" @search="handleSearch"></search>
       <top-tab :data="tabList" :active="selectedIndex" @change="changeTopTab"></top-tab>
@@ -9,7 +9,7 @@
 
       <van-list
         v-if="goodsList[tabIndex].length"
-        class="content"
+        :class="['content', {'is-weapp' : isapp}]"
         v-model="loading"
         :finished="pageList[tabIndex].finished"
         finished-text="没有更多了"
@@ -51,27 +51,15 @@ export default {
 
   data () {
     return {
+      isapp: false,
       active: 0,
       selectedIndex: 0, // 当前选中标签页索引 0: 全部 | 1: 配件 | 2: 护肤 | 3: 其他
       value: '',
       loading: false,
       finished: false,
-      goodsList: [[],[],[],[]], // 商品详情
+      goodsList: [[]], // 各分类商品列表-初始化：全部
+      // 各分类商品列表对应页码信息-初始化：全部
       pageList: [{
-        page: 0,
-        total: 0,
-        finished: false
-      }, {
-        first: true,
-        page: 0,
-        total: 0,
-        finished: false
-      }, {
-
-        page: 0,
-        total: 0,
-        finished: false
-      }, {
         page: 0,
         total: 0,
         finished: false
@@ -93,12 +81,27 @@ export default {
     this.getGoods()
   },
 
+  mounted () {
+    this.$op.isWeChatApplet().then(async res => {
+      this.isapp = res
+    })
+  },
+
   methods: {
     async getCategories() {
       this.$op.loading()
       const data = await getCategories()
       this.$toast.clear()
       this.tabList.push(...data)
+      // 初始化追加各分类对应的存储数据（全部已默认存在）
+      for (let i = 0;i<data.length;i++) {
+        this.goodsList.push([])
+        this.pageList.push({
+          page: 0,
+          total: 0,
+          finished: false
+        })
+      }
 
       // 刷新查询当前分类下的商品
       this.form.categoryId = Number(this.$route.params.type)
@@ -146,10 +149,8 @@ export default {
       this.selectedIndex = index
       this.form.categoryId = id
       this.$router.replace({ name: "supply", params: { type: id } })
-      // 自动加载第一页数据
-      if (this.pageList[this.selectedIndex].page === 0) {
-        this.getGoods()
-      }
+      this.pageList[this.selectedIndex].page = 0
+      this.getGoods()
     },
 
     handleSearch () {
@@ -163,11 +164,9 @@ export default {
 <style scoped lang="scss">
 @import '~@/assets/css/_variables.scss';
 .wrapper {
-  width: 100%;
-  position: fixed;
-  top: 100px;
-  bottom: 50px;
-  overflow: auto;
+  min-height: 100%;
+  padding: 90px 0 50px;
+  background: #fff;
 }
 .header {
   width: 100%;
@@ -176,6 +175,9 @@ export default {
   z-index: 10;
 }
 
+.content.is-weapp {
+  margin-bottom: 34px;
+}
 .content {
   width: 100%;
   min-height: 100%;
@@ -188,6 +190,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    margin-bottom: -25px;
   }
   .goods {
     width: 160px;

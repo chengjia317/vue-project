@@ -3,7 +3,8 @@ import {getCoupons} from '@/api/coupons'
 
 export default {
   state: {
-    dataList: [],
+    dataList: [], // 可使用的现金券对象集合
+    confirmList: [],  // 确认选取的现金券对象集合
   },
 
   getters: {
@@ -12,53 +13,49 @@ export default {
         item.isSelected = false
       })
       return state.dataList
+    },
+
+    // 选中现金券的id数组集合
+    'confirmListIds': state => {
+      const couponIds = []
+      state.confirmList.find(item => {
+        if (item.isSelected) {
+          couponIds.push(item.id)
+        }
+      })
+      return couponIds
     }
   },
 
   mutations: {
     DISCOUNT_SELECTED (state, index) {
-      // 优惠券不可叠加
-      state.dataList.forEach(item => {
-        item.isSelected = false
-      })
-
       Vue.set(state.dataList[index], `isSelected`, true)
     },
     
     DISCOUNT_CANCEL (state, index) {
       Vue.set(state.dataList[index], `isSelected`, false)
+    },
+
+    DISCOUNT_CONFIRM (state) {
+      state.confirmList = []
+      state.dataList.forEach(item => {
+        if (item.isSelected) {
+          state.confirmList.push(item)
+        }
+      })
+      console.log('confrim', state.confirmList)
+    },
+
+    DISCOUNT_CLEAR (state) {
+      state.confirmList = []
     }
   },
 
   actions: {
+    // 获取可用优惠券
     async getDiscountData ({state}) {
       const data = await getCoupons('UNUSED')
-      // const data = [
-      //   {
-      //       "id": 1,
-      //       "name": "优惠券1",
-      //       "introduce": "",
-      //       "value": 100,
-      //       "type": "CASH",
-      //       "fulfill": 1000,
-      //       "startTime": 1547631335000,
-      //       "endTime": 1547651335000,
-      //       "createAt": 1547634668000,
-      //       "status": "UNUSED"
-      //   },
-      //   {
-      //     "id": 2,
-      //     "name": "优惠券1",
-      //     "introduce": "",
-      //     "value": 300,
-      //     "type": "CASH",
-      //     "fulfill": 1000,
-      //     "startTime": 1547631335000,
-      //     "endTime": 1547651335000,
-      //     "createAt": 1547634668000,
-      //     "status": "UNUSED"
-      // }]
-      // console.log('UNUSED', data)
+      console.log('UNUSED', data)
       data.forEach(item => {
         item.isSelected = false
       })

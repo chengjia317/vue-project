@@ -1,12 +1,12 @@
 <template>
   <div>
-    <com-tab-title title="我的优惠券"></com-tab-title>
+    <com-tab-title title="我的现金券"></com-tab-title>
     
     <top-tab class="tab" :data="tabList" :active="selectedIndex" @change="changeTopTab"></top-tab>
 
     <!-- 未使用 -->
     <div ref="scroll0" :class="['scrollWrapper', {'active': selectedIndex === 0}]">
-      <div v-if="!unusedList.length" class="no-data">暂无优惠券</div>
+      <div v-if="!unusedList.length" class="no-data">暂无现金券</div>
       <div v-else class="content">
         <discount :type="1" :data="item" v-for="(item, index) in unusedList" :key="index"></discount>
       </div>
@@ -14,7 +14,7 @@
 
     <!-- 已使用 -->
     <div ref="scroll1" :class="['scrollWrapper', {'active': selectedIndex === 1}]">
-      <div v-if="!usedList.length" class="no-data">暂无优惠券</div>
+      <div v-if="!usedList.length" class="no-data">暂无现金券</div>
       <div v-else class="content">
         <discount :type="2" :data="item" v-for="(item, index) in usedList" :key="index"></discount>
       </div>
@@ -22,13 +22,13 @@
 
     <!-- 已过期 -->
     <div ref="scroll2" :class="['scrollWrapper', {'active': selectedIndex === 2}]">
-      <div v-if="!expiredList.length" class="no-data">暂无优惠券</div>
+      <div v-if="!expiredList.length" class="no-data">暂无现金券</div>
       <div v-else class="content">
         <discount :type="3" :data="item" v-for="(item, index) in expiredList" :key="index"></discount>
       </div>
     </div>
 
-    <router-link to="/invite" class="op-btn-bottom" tag="button">获取优惠券</router-link>
+    <router-link to="/invite" class="op-btn-bottom" tag="button">获取现金券</router-link>
   </div>
 </template>
 
@@ -107,9 +107,15 @@ export default {
     },
 
     initScroll () {
-      !this.scroll0 ? this.scroll0 = new BScroll(this.$refs.scroll0) : this.scroll0.refresh()
-      !this.scroll1 ? this.scroll1 = new BScroll(this.$refs.scroll1) : this.scroll1.refresh()
-      !this.scroll2 ? this.scroll2 = new BScroll(this.$refs.scroll2) : this.scroll2.refresh()
+      !this.scroll0 ? this.scroll0 = new BScroll(this.$refs.scroll0, {
+        mouseWheel: true
+      }) : this.scroll0.refresh()
+      !this.scroll1 ? this.scroll1 = new BScroll(this.$refs.scroll1, {
+        mouseWheel: true
+      }) : this.scroll1.refresh()
+      !this.scroll2 ? this.scroll2 = new BScroll(this.$refs.scroll2, {
+        mouseWheel: true
+      }) : this.scroll2.refresh()
     },
   }
 };

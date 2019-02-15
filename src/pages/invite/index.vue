@@ -7,10 +7,11 @@
         <div class="rule-wrapper">
           <h1 class="title">邀请规则</h1>
           <ul class="rule-list">
-            <li>• 通过分享您的专属链接，邀请好友来到shavedog进行购物。</li>
-            <li>• 当好友成功订阅我们的会员时，您将获得我们提供的优惠券一张。</li>
-            <li>• 优惠券可以累积，邀请越多奖励越高</li>
-            <li>• 最终解释归shavedog所有。</li>
+            <li>• 你可以将你的专属邀请链接，分享给任何好友;</li>
+            <li>• 好友通过你的链接，成功注册并付费成为茬狗shavedog会员之后，你们各自获得¥10的现金券;</li>
+            <li>• 现金券无任何使用门槛，可在任何订单内，不限数量使用;</li>
+            <li>• 邀请奖励可累计，邀请成功越多，奖励越多;</li>
+            <li>• 最终解释权归......没啥好解释的。</li>
           </ul>
         </div>
         <button class="op-btn-primary" @click="handleShare">邀请朋友</button>
@@ -27,7 +28,8 @@ import config from '@/config'
 export default {
   data () {
     return {
-      share: false
+      share: false,
+      shareImg: require('../../assets/image/index2.png')
     }
   },
 
@@ -37,19 +39,28 @@ export default {
     }
   },
 
+  mounted () {
+    this.wechatShare()
+  },
+
   methods: {
     handleShare () {
       console.log('wx share')
       this.share = true
-      
+    },
+    wechatShare () {
       wechatShare({
-        title: 'shavedog',
-        desc: `${this.profile.nickname}邀请你加入茬狗会员`,
+        title: `${this.profile.nickname}邀请你成为茬狗剃须刀订阅会员`,
+        desc: `一年150元，12个刀头，免费到家。别再被大公司骗了。`,
         link: `${config.redirectUri}?inviterId=${this.profile.id}`,
-        imgUrl: '',
+        imgUrl: `${config.redirectUri}/${this.shareImg}`,
         success: () => {
           this.share = false
           this.$toast('分享成功')
+        },
+        cancel: () => {
+          this.share = false
+          this.$toast('取消分享')
         }
       })
     }
@@ -76,22 +87,20 @@ export default {
     position: fixed;
     bottom: 20px;
     width: 335px;
-    padding: 24px 18px 20px;
+    padding: 14px 18px 20px;
     background: #fff;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.10);
     border-radius: 4px;
   }
-  .rule-wrapper {
-    padding: 0 24px;
-  }
   .title {
-    font-size: 24px;
+    font-size: 22px;
   }
   .rule-list {
-    margin: 8px 0 30px;
+    margin: 8px 0 20px;
+    font-size: 13px;
     font-family: PingFangSC-Regular;
     li {
-      margin-bottom: 18px;
+      margin-bottom: 10px;
     }
   }
 }

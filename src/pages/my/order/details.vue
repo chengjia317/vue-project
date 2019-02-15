@@ -49,13 +49,13 @@
             <span>¥{{orderDetails.totalAmount | toDecimal2}}</span>
           </div>
           <div class="flex-sb">
-            <span>优惠券抵扣</span>
+            <span>现金券抵扣</span>
             <span>-¥{{orderDetails.couponAmount | toDecimal2}}</span>
           </div>
         </div>
       </goods>
 
-      <button class="op-btn">联系客服</button>
+      <button class="op-btn" @click="handelService">联系客服</button>
     </div>
     <!-- 查看每期详情 -->
     <periods-details :show.sync="periodsShow"></periods-details>
@@ -83,6 +83,10 @@ export default {
   computed: {
     addressName: function () {
       return `${this.orderDetails.address.provinceName}${this.orderDetails.address.cityName}${this.orderDetails.address.areaName}${this.orderDetails.address.address}`
+    },
+
+    profile: function () {
+      return this.$store.state.account.profile
     }
   },
 
@@ -96,7 +100,20 @@ export default {
       this.orderDetails = await getOrderDetails(this.id)
       console.log('order details', this.orderDetails)
       this.$toast.clear()
-    }
+    },
+
+    handelService () {
+      _MEIQIA('showPanel')
+      _MEIQIA('metadata', {
+        orderId: this.id,
+        userId: this.profile.id,
+        vip: this.profile.vip,
+        name: this.profile.nickname,
+        tel: this.profile.phone,
+      })
+      console.log(this.id,this.profile, this.profile.nickname)
+
+    },
   }
 }
 </script>

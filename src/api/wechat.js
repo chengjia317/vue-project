@@ -1,5 +1,4 @@
 import axios from '@/utils/axios'
-import wx from 'weixin-js-sdk'
 import config from '@/config.js'
 import Vue from 'vue'
 
@@ -35,19 +34,20 @@ export function getWechatLogin () {
 }
 
 // 微信登录
-export function wechatLogin (code) {
+export function wechatLogin (code, inviterId) {
   return axios({
     url: `/api/wechat/login`,
-    method: 'get',
-    params: {
-      code
+    method: 'POST',
+    data: {
+      code,
+      inviterId
     }
   })
 }
 
 // 配置分享内容参数
 export function wechatShare (data) {
-  const {title, desc, link, imgUrl, success} = data
+  const {title, desc, link, imgUrl, success, cancel} = data
   const config = Vue.prototype.$wx_config
   if (!config) {
     return
@@ -62,7 +62,8 @@ export function wechatShare (data) {
       title,
       link,
       imgUrl,
-      success
+      success,
+      cancel
     })
     wx.onMenuShareAppMessage({
       title,
@@ -70,7 +71,8 @@ export function wechatShare (data) {
       link,
       imgUrl,
       dataUrl: '',
-      success
+      success,
+      cancel
     })
   })
 }

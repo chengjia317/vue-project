@@ -5,7 +5,7 @@ import { Toast } from 'vant'
 export default {
   state: {
     token: localStorage.getItem('token') || '',
-    profile: localStorage.getItem('profile') || {}, // 个人信息
+    profile: JSON.parse(localStorage.getItem('profile')) || {}, // 个人信息
     inviterId: Number(localStorage.getItem('inviterId')) || '', // 邀请用户
   },
 
@@ -13,6 +13,17 @@ export default {
     LOGIN (state, data) {
       localStorage.setItem('token', data)
       state.token = data
+    },
+
+    LOGOUT (state) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('profile')
+      state.token = ''
+      state.profile = {}
+      Toast({
+        message: '退出成功',
+        duration: 2000
+      })
     },
     
     GET_PROFILE (state, data) {
@@ -42,10 +53,14 @@ export default {
       })
     },
 
-    wechatLogin ({commit}, code) {
-      return wechatLogin(code).then(res => {
+    wechatLogin ({commit, state}, code) {
+      return wechatLogin(code, state.inviterId).then(res => {
         commit('LOGIN', res)
       })
+    },
+
+    logout ({commit}) {
+      commit('LOGOUT')
     },
 
     getProfile ({commit}) {

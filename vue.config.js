@@ -4,8 +4,8 @@ module.exports = {
   baseUrl: baseUrl,
   lintOnSave: true,
   devServer: {
-    host: 'shavedog-m.1programmer.com',
-    port: 80,
+    // host: 'shavedog-m.1programmer.com',
+    // port: 80,
     publicPath: baseUrl,
     proxy: {
       '/api': {

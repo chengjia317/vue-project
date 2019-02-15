@@ -12,7 +12,8 @@
           <input v-model="form.phone" type="number" placeholder="联系电话" oninput="if(value.length>11)value=value.slice(0,11)">
         </li>
         <li @click="show=true">
-          <span>省/市/区</span>
+          <!-- 选择省市区时隐藏软键盘 -->
+          <input disabled value="省/市/区" style="text-align:left">
           <input disabled v-model="areaName" type="text">
           <i class="op-icon-arrow"></i>
         </li>

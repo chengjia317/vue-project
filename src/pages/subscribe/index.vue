@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="wrapper">
+    <div :class="['wrapper', {'is-weapp': isapp}]">
       <div class="section">
         <div class="section1">
           <div class="logo">
@@ -13,7 +13,7 @@
           </div>
           <div class="flex-sb">
             <button class="op-btn-primary btn-subscribe" @click="handleOpen">开始订阅</button>
-            <button class="op-btn-primary btn-gift"  @click="handleOpen"><i class="op-icon-gift"></i>赠礼</button>
+            <!-- <button class="op-btn-primary btn-gift"  @click="handleOpen"><i class="op-icon-gift"></i>赠礼</button> -->
           </div>
         </div>
 
@@ -62,7 +62,7 @@
           </ul>
           <div class="flex-sb">
             <button class="op-btn-primary btn-subscribe" @click="handleOpen">开始订阅</button>
-            <button class="op-btn-primary btn-gift"  @click="handleOpen"><i class="op-icon-gift"></i>赠礼</button>
+            <!-- <button class="op-btn-primary btn-gift"  @click="handleOpen"><i class="op-icon-gift"></i>赠礼</button> -->
           </div>
         </div>
 
@@ -105,7 +105,7 @@
             </ul>
             <div class="flex-sb">
               <button class="op-btn-primary btn-subscribe" @click="handleOpen">开始订阅</button>
-              <button class="op-btn-primary btn-gift"  @click="handleOpen"><i class="op-icon-gift"></i>赠礼</button>
+              <!-- <button class="op-btn-primary btn-gift"  @click="handleOpen"><i class="op-icon-gift"></i>赠礼</button> -->
             </div>
           </div>
         </div>
@@ -160,42 +160,58 @@
           </div>
           <div class="flex-sb">
             <button class="op-btn-primary btn-subscribe" @click="handleOpen">开始订阅</button>
-            <button class="op-btn-primary btn-gift"  @click="handleOpen"><i class="op-icon-gift"></i>赠礼</button>
+            <!-- <button class="op-btn-primary btn-gift"  @click="handleOpen"><i class="op-icon-gift"></i>赠礼</button> -->
           </div>
         </div>
       </div>
     </div>
 
+    <!-- 可用现金券列表 -->
+    <discount-details :show.sync="discountShow"></discount-details>
+
     <!-- 填写订单 -->
-    <order-details :show.sync="orderShow" :goodsId="id"></order-details>
+    <order-details :show.sync="orderShow" @discountOpen="discountShow = true"></order-details>
   </div>
 </template>
 
 <script>
+import discountDetails from '@/components/discountDetails'
 import orderDetails from '@/components/orderDetails'
 import BScroll from "better-scroll"
 export default {
   components: {
+    discountDetails,
     orderDetails
   },
 
   data () {
     return {
       orderShow: false,
-      id: 0, // 订阅商品id
+      discountShow: false,
+      isapp: false,
     }
   },
 
   mounted () {
-    this.$nextTick(() => {
-      this.scroll = new BScroll('.wrapper', {
-        click: true
-      })
+    this.$op.isWeChatApplet().then(async res => {
+      this.isapp = res
     })
+    setTimeout(() => {
+      this.$nextTick(() => {
+        this.scroll = new BScroll('.wrapper', {
+          click: true,
+          mouseWheel: true
+        })
+      })
+    }, 0)
   },
 
   activated () {
     this.scroll && this.scroll.refresh()
+  },
+
+  deactivated () {
+    this.$store.commit("DISCOUNT_CLEAR")
   },
 
   beforeRouteEnter (to, from, next) {
@@ -232,6 +248,9 @@ export default {
   top: 0;
   bottom: 50px;
 }
+.wrapper.is-weapp {
+  bottom: 84px;
+}
 .section {
   font-family: PingFangSC-Regular;
   text-align: center;
@@ -242,9 +261,9 @@ export default {
 }
 .btn-subscribe {
   flex: 1;
-  margin-right: 10px;
 }
 .btn-gift {
+  margin-left: 10px;
   width: 84px;
 }
 .op-icon-gift {
