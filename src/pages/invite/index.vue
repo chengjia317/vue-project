@@ -29,7 +29,7 @@ export default {
   data () {
     return {
       share: false,
-      shareImg: require('../../assets/image/index2.png')
+      shareImg: require('../../assets/image/share.png')
     }
   },
 
@@ -56,11 +56,6 @@ export default {
         imgUrl: `${config.redirectUri}/${this.shareImg}`,
         success: () => {
           this.share = false
-          this.$toast('分享成功')
-        },
-        cancel: () => {
-          this.share = false
-          this.$toast('取消分享')
         }
       })
     }
@@ -81,8 +76,9 @@ export default {
   padding: 20px;
   width: 100%;
   height: 100%;
-  background: url('../../assets/image/bg_invite.png') 0 -35px;
+  background: url('../../assets/image/bg_invite.png') center;
   background-size: cover;
+  background-repeat: no-repeat;
   .content {
     position: fixed;
     bottom: 20px;

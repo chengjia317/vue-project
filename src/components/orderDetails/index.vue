@@ -52,8 +52,8 @@
               <div class="cover"><img :src="details.coverImage" alt=""></div>
               <div class="info">
                 <div class="name">{{details.name}} {{details.subTitle}}</div>
-                <!-- 若为会员则展示会员价 -->
-                <div v-if="!profile.vip" class="price">¥<span style="font-size:18px">{{details.price | pointBefore}}</span>.{{details.price | pointAfter}}</div>
+                <!-- 若为会员|无会员价则展示会员价 -->
+                <div v-if="!profile.vip || !details.isVipPrice" class="price">¥<span style="font-size:18px">{{details.price | pointBefore}}</span>.{{details.price | pointAfter}}</div>
                 <div v-else class="price">¥<span style="font-size:18px">{{details.vipPrice | pointBefore}}</span>.{{details.vipPrice | pointAfter}}</div>
               </div>
             </div>
@@ -61,6 +61,12 @@
               <span>购买数量</span>
               <stepper v-model="details.count" @change="countChange"></stepper>
             </div>
+          </div>
+
+          <div class="tips-wrapper">
+            <span class="tips">邮费说明：</span>
+            <span v-if="path === '/subscribe'">由于这几个地区地理位置较远，目前我们实在无法承担邮费，订阅会员价格会有所调整：新疆、西藏为250元/年，内蒙、青海、甘肃、宁夏、海南为210元/年。</span>
+            <span v-else>由于这几个地区地理位置较远，额外收取邮费：新疆、西藏20元，内蒙、青海、甘肃、宁夏、海南10元。其他地区包邮。</span>
           </div>
 
           <div class="btn-wrapper">
@@ -147,8 +153,8 @@ export default {
       if (this.path === '/subscribe') {
         price = 15000
       } else {
-        // 单件商品 | 是否为会员
-        let itemPrice = this.profile.vip ? this.details.vipPrice : this.details.price
+        // 单件商品 |（会员且为会员价时显示会员价）
+        let itemPrice = this.profile.vip && this.details.isVipPrice ? this.details.vipPrice : this.details.price
         price = itemPrice * this.details.count
       }
       this.discountConfirmList.forEach(item => {
@@ -244,9 +250,18 @@ export default {
         } else {
           data = await createPayOrder(orderDetails.id)
         }
+        let redirect = '' // 支付成功后重定向地址
+        if (this.path === '/subscribe') { // 订阅
+          redirect = '/my/subscribe'
+        } else { // 单件商品
+          redirect = '/my/order/4'
+        }
+
+
         // 支付金额 = 0元
         if (data === '') {
           this.$toast('下单成功')
+          this.$router.push(redirect)
           return
         }
         // 支付金额 > 0元
@@ -257,12 +272,13 @@ export default {
             debug: false,
             success: () => {
               this.$toast('支付成功')
+              this.$router.push(redirect)
             }
           })
         } else {
           // 小程序环境
           let payParams = encodeURIComponent(JSON.stringify(data))
-          wx.miniProgram.navigateTo({url: `/pages/payment/payment?params=${payParams}`})
+          wx.miniProgram.navigateTo({url: `/pages/payment/payment?params=${payParams}&redirect=${redirect}`})
         }
       })
     },
@@ -280,6 +296,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.tips-wrapper {
+  font-size: 12px;
+}
+.tips {
+  color: #0E948A;
+  font-weight: bold;
+}
 .address-info {
   flex: 1;
   .address {
@@ -373,6 +396,7 @@ export default {
 
 // 商品
 .goods-wrapper {
+  margin: 10px 0;
   padding: 15px;
   @include base;
   .info {

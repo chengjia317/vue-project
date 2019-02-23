@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import BScroll from 'better-scroll'
+// import BScroll from 'better-scroll'
 import tabbar from '@/components/tabbar/'
 export default {
   name: 'app',

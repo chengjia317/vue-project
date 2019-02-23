@@ -96,7 +96,7 @@ export default [
     path: '/my/discount/:type?',
     name: 'my_discount',
     component: () => import('@/pages/my/discount/index.vue'),
-    meta: {showTab: false, keepAlive: false, requiresAuth: false}
+    meta: {showTab: false, keepAlive: false, requiresAuth: true}
   },
   // 我的地址
   {

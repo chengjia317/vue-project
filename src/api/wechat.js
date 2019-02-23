@@ -19,9 +19,12 @@ export function getWechatApiConfig (url) {
 }
 
 // 获取微信登录url
-export function getWechatLogin () {
+export function getWechatLogin (url) {
   let redirectUri = config.redirectUri
   // let redirectUri = 'http://shavedog-m.1programmer.com'
+  if (url) {
+    redirectUri = `${redirectUri}${url}`
+  }
   axios({
     url: `/api/wechat/login/url`,
     method: 'get',

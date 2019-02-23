@@ -22,7 +22,7 @@
             <h3 class="name ellipsis">{{item.name}}</h3>
             <div class="price">
               <span>¥{{item.price | toDecimal2}}</span>
-              <span class="price-member">会员价：¥{{item.vipPrice | toDecimal2}}</span>
+              <span v-if="item.isVipPrice" class="price-member">会员价：¥{{item.vipPrice | toDecimal2}}</span>
             </div>
           </router-link>
         </div>
@@ -82,9 +82,14 @@ export default {
   },
 
   mounted () {
-    this.$op.isWeChatApplet().then(async res => {
-      this.isapp = res
-    })
+    // this.$op.isWeChatApplet().then(async res => {
+    //   if (res && (this.$op.isIPhoneX() || this.$op.isIPhoneXSMax() || this.$op.isIPhoneXR())) {
+    //     this.isapp = true
+    //   }
+    // })
+    if (this.$op.isIPhoneX() || this.$op.isIPhoneXSMax() || this.$op.isIPhoneXR()) {
+      this.isapp = true
+    }
   },
 
   methods: {

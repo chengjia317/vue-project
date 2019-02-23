@@ -46,6 +46,18 @@ export let utils = {
       }
     })
   },
+
+  'isIPhoneX': () => {
+    return /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 375 && window.screen.height === 812
+  },
+
+  'isIPhoneXSMax': () => {
+    return /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 414 && window.screen.height === 896
+  },
+
+  'isIPhoneXR': () => {
+    return /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 2 && window.screen.width === 414 && window.screen.height === 896
+  },
 }
 
 function install (Vue) {

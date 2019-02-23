@@ -19,25 +19,25 @@
 
         <div class="section2">
           <h2 class="title font-ps">茬狗会员特权</h2>
-          <div class="price">仅需¥150/每年</div>
+          <div class="price">¥150/每年</div>
           <ul class="list">
             <li>
               <h3 class="sub-title font-ps">畅享12个刀头</h3>
               <p>一年四期，我们每三个月为会您寄送3个新鲜刀头。</p>
             </li>
             <li>
-              <h3 class="sub-title font-ps">独享商品折扣</h3>
-              <p>会员购买其他补给商品时享受折扣价，并会获得额外刀头，节省您的每一分钱。</p>
+              <h3 class="sub-title font-ps">所有补给独享八折</h3>
+              <p>随时补给湿刮必需品，会员享受八折优惠，每次购买会额外赠送一个刀头。</p>
             </li>
             <li>
               <h3 class="sub-title font-ps">多次订购自动续期</h3>
-              <p>如果您多次订购会员，会自动为您的会员期限续期。</p>
+              <p>如果多次购买订阅会员套餐，会自动为您的会员期限续费。</p>
             </li>
           </ul>
         </div>
 
         <div class="section3">
-          <h2 class="title font-ps">来看看瞧瞧都有啥</h2>
+          <h2 class="title font-ps">四期订阅盒子</h2>
           <ul class="list">
             <li>
               <div class="img">
@@ -45,7 +45,7 @@
               </div>
               <h3 class="sub-title font-ps">第一期配送内容</h3>
               <div class="des">
-                <p>3个新鲜刀头/一只狗头盔</p>
+                <p>3个新鲜刀头/一只保护头盔</p>
                 <p>一个自主站立式手柄（不能震动哦）</p>
                 <p>一瓶氨基酸芦荟剃须膏（湿刮高潮全靠它）</p>
               </div>
@@ -56,7 +56,7 @@
               </div>
               <h3 class="sub-title font-ps">后续三期补给盒</h3>
               <div class="des">
-                <p>之后每三个月都会将补给盒送货上门，每个补给盒含3个价值XX元的刀头。</p>
+                <p>之后每三个月，会有一盒补给送货上门，每个补给盒有三个新鲜刀头</p>
               </div>
             </li>
           </ul>
@@ -116,7 +116,7 @@
           </div>
           <div class="content">
             <h4 class="slogan font-ps">不把我们用倒闭了，<br>算你输</h4>
-            <p>剃须刀的工厂来自于我们创始团队成员之一的家族，出口外贸的生意已经做了十四年，也正是依靠自有的生产供应链，我们才能打破行业原有的定价规则，真正为大家提供价格合理，质量上乘的刀锋体验。</p>
+            <p>我们产品的设计生产，来自创始成员之一的家族工厂，出口外贸的生意已经做了十四年，也正是依靠自有的生产供应链，我们才能打破行业原有的定价规则，真正为大家提供价格合理，质量上乘的刀锋体验。</p>
             <p>我们其他的产品，从设计、打样到全自动生产，全都是和中国本土工厂合作，产品的持续更新和迭代具有十足的保证。</p>
             <p>所以，刀头真的请随便用，不把我们用倒闭了，算你输。</p>
           </div>
@@ -193,15 +193,21 @@ export default {
   },
 
   mounted () {
-    this.$op.isWeChatApplet().then(async res => {
-      this.isapp = res
-    })
+    // this.$op.isWeChatApplet().then(async res => {
+    //   if (res && (this.$op.isIPhoneX() || this.$op.isIPhoneXSMax() || this.$op.isIPhoneXR())) {
+    //     this.isapp = true
+    //   }
+    // })
+    if (this.$op.isIPhoneX() || this.$op.isIPhoneXSMax() || this.$op.isIPhoneXR()) {
+      this.isapp = true
+    }
     setTimeout(() => {
       this.$nextTick(() => {
         this.scroll = new BScroll('.wrapper', {
           click: true,
           mouseWheel: true
         })
+        this.scroll.refresh()
       })
     }, 0)
   },
@@ -353,7 +359,7 @@ export default {
     color: #0E948A;
   }
   .img {
-    height: 240px;
+    height: 202px;
   }
 }
 .section4 {
@@ -374,7 +380,7 @@ export default {
     line-height: 40px;
   }
   .img {
-    height: 377px;
+    height: 451px;
   }
 }
 .section5 {
@@ -399,7 +405,7 @@ export default {
     margin-top: 26px;
   }
   .img {
-    height: 374px;
+    height: 283px;
   }
 }
 .section6 {
@@ -420,7 +426,7 @@ export default {
     }
   }
   .img {
-    height: 310px;
+    height: 236px;
   }
 }
 .section7 {

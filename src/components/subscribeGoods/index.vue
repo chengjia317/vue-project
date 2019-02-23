@@ -3,16 +3,16 @@
     <div class="flex-sb">
       <span>订单号 {{data.displayId}}</span>
       <!-- 右上角信息插槽 -->
-      <div name="header-right">
+      <slot name="header-right">
         <span class="status">{{data.isShip | formatOrderStatus}}</span>
-      </div>
+      </slot>
     </div>
 
     <template>
       <div class="details flex-sb" @click="goToDetails(data.id)">
         <img class="cover" src="../../assets/image/index2.png" alt="">
         <div class="content">
-          <h3 class="name">Shavedog茬狗手动剃须刀豪华套装 茬狗经典款1刀架+6刀头</h3>
+          <h3 class="name">茬狗shavedog — 订阅会员年费套餐，共4期，每三个月寄送1期</h3>
           <div>
             <span class="op-tag"><i class="font-10">订阅商品</i></span>
             <span>第{{data.period}}期</span>

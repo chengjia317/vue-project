@@ -12,6 +12,16 @@
         </div>
       </div>
 
+      <subscribeGoods :data="orderDetails" class="goods">
+        <div slot="header-right">创建时间 {{orderDetails.createAt | formatDate}}</div>
+        <div slot="discount" class="discount">
+          <div class="flex-sb">
+            <span>商品总价</span>
+            <span>¥{{15000 | toDecimal2}}</span>
+          </div>
+        </div>
+      </subscribeGoods>
+
       <div class="details-wrapper">
         <!-- <div class="periods-wrapper flex-sb" @click="periodsShow = true">
           <span>查看每期详情</span>
@@ -32,21 +42,19 @@
           </div>
         </div>
 
-        <div v-if="orderDetails.status !== 'WAIT'" class="date-wrapper flex-sb">
+        <div class="date-wrapper flex-sb">
+          <span>快递公司</span>
+          <span>{{orderDetails.expressCompany | formatExpressCompany}}</span>
+        </div>
+        <div class="date-wrapper flex-sb">
           <span>快递单号</span>
           <span>{{orderDetails.waybill || '暂无'}}</span>
         </div>
-      </div>
-
-      <subscribeGoods :data="orderDetails" class="goods">
-        <div slot="header-right">创建时间 {{orderDetails.createAt | formatDate}}</div>
-        <div slot="discount" class="discount">
-          <div class="flex-sb">
-            <span>商品总价</span>
-            <span>¥{{15000 | toDecimal2}}</span>
-          </div>
+        <div class="date-wrapper flex-sb">
+          <span>发货时间</span>
+          <span>{{orderDetails.startAt | formatDate}}</span>
         </div>
-      </subscribeGoods>
+      </div>
 
       <button class="op-btn" @click="handelService">联系客服</button>
     </div>
@@ -97,13 +105,22 @@ export default {
     },
 
     handelService () {
-      _MEIQIA('showPanel')
-      _MEIQIA('metadata', {
-        orderId: this.id,
-        userId: this.profile.id,
-        vip: this.profile.vip,
-        name: this.profile.nickname,
-        tel: this.profile.phone,
+      this.$op.isWeChatApplet().then(res => {
+        if (!res) {
+          // 微信环境
+          _MEIQIA('showPanel')
+          _MEIQIA('metadata', {
+            orderId: this.id,
+            userId: this.profile.id,
+            vip: this.profile.vip,
+            name: this.profile.nickname,
+            tel: this.profile.phone,
+          })
+        } else {
+          wx.miniProgram.navigateTo({url: '/pages/service/service'})
+        }
+      }).catch(err => {
+        console.error(err)
       })
     },
   }
@@ -113,6 +130,7 @@ export default {
 <style lang="scss" scoped>
 .wrapper {
   padding-top: 50px;
+  background: rgb(246, 248, 249);
 }
 .status-wrapper {
   padding: 0 60px 0 40px;
@@ -131,6 +149,7 @@ export default {
   padding: 14px 20px;
 }
 .details-wrapper {
+  margin: 10px 0;
   background: #fff;
   .periods-wrapper {
     font-size: 15px;
@@ -145,7 +164,6 @@ export default {
   }
 
   .address-wrapper {
-    border-top: 1px solid #E6EAEE;
     border-bottom: 1px solid #E6EAEE;
     @include base;
     .address {

@@ -1,27 +1,27 @@
 <template>
   <van-tabbar :class="isapp ? 'is-weapp': ''" v-model="active">
-    <van-tabbar-item icon="home-o" to='/index'>
+    <van-tabbar-item icon="home-o" :replace="true" to='/index'>
       <span>使命</span>
       <img
         slot="icon"
         slot-scope="props"
         :src="props.active ? icon1.active : icon1.normal">
     </van-tabbar-item>
-    <van-tabbar-item icon="search" to='/subscribe'>
+    <van-tabbar-item icon="search" :replace="true" to='/subscribe'>
       <span>订阅</span>
       <img
         slot="icon"
         slot-scope="props"
         :src="props.active ? icon2.active : icon2.normal">
     </van-tabbar-item>
-    <van-tabbar-item icon="search" to='/supply'>
+    <van-tabbar-item icon="search" :replace="true" to='/supply'>
       <span>补给</span>
       <img
         slot="icon"
         slot-scope="props"
         :src="props.active ? icon3.active : icon3.normal">
     </van-tabbar-item>
-    <van-tabbar-item icon="setting-o" to='/my'>
+    <van-tabbar-item icon="setting-o" :replace="true" to='/my'>
       <span>我的</span>
       <img
         slot="icon"
@@ -58,12 +58,14 @@ export default {
 
   mounted () {
     this.$op.isWeChatApplet().then(async res => {
-      this.isapp = res
+      if (res && (this.$op.isIPhoneX() || this.$op.isIPhoneXSMax() || this.$op.isIPhoneXR())) {
+        this.isapp = true
+      }
     })
   },
 
   watch:{
-    $route(to, from){
+    $route(to){
       const path = to.path
       if (path === '/index') {
         this.active = 0

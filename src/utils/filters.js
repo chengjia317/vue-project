@@ -2,8 +2,8 @@ import dayjs from 'dayjs'
 
 function toDecimal2 (x) {
   var f = parseFloat(x)
-  if (isNaN(f)) {
-    return 0.00
+  if (isNaN(f) || f === 0) {
+    return 0
   }
   var fn = Math.round(x * 100) / 10000
   var s = fn.toString()
@@ -60,11 +60,19 @@ export default {
   },
 
   'formatDate': (date) => {
-    return dayjs(date).format('YYYY-MM-DD')
+    if (typeof date === 'undefined') {
+      return '暂无'
+    } else {
+      return dayjs(date).format('YYYY-MM-DD')
+    }
   },
 
   'formatDatePoint': (date) => {
-    return dayjs(date).format('YYYY.MM.DD')
+    if (typeof date === 'undefined') {
+      return '暂无'
+    } else {
+      return dayjs(date).format('YYYY.MM.DD')
+    }
   },
   
   /**
@@ -99,5 +107,43 @@ export default {
       }
       return result
     }
-  }
+  },
+
+  /**
+   * 快递公司
+   * @param {String}:  SHUNFENG: 顺丰 | SHENTONG: 申通 | YUANTONG: 圆通 | YUNDA: 韵达 | ZHONGTONG: 中通 | ZHAIJISONG: 宅急送 | SUER: 速尔物流 | TIANTIAN: 天天快递
+   */
+  'formatExpressCompany': (status) => {
+    let result = ''
+    switch (status) {
+      case 'SHUNFENG':
+        result = '顺丰'
+        break;
+      case 'SHENTONG':
+        result = '申通'
+        break;
+      case 'YUANTONG':
+        result = '圆通'
+        break;
+      case 'YUNDA':
+        result = '韵达'
+        break;
+      case 'ZHONGTONG':
+        result = '中通'
+        break;
+      case 'ZHAIJISONG':
+        result = '宅急送'
+        break;
+      case 'SUER':
+        result = '速尔物流'
+        break;
+      case 'TIANTIAN':
+        result = '天天快递'
+        break;
+      default:
+        result = '暂无'
+        break;
+    }
+    return result
+  },
 }

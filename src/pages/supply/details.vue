@@ -14,7 +14,7 @@
           
           <div class="details-item">
             <span class="price"><i>¥</i>{{goodsDetails.price | pointBefore}}.<i>{{goodsDetails.price | pointAfter}}</i></span>
-            <span class="op-tag"><i class="font-10">会员价¥{{goodsDetails.vipPrice | toDecimal2}}</i></span>
+            <span v-if="goodsDetails.isVipPrice" class="op-tag"><i class="font-10">会员价¥{{goodsDetails.vipPrice | toDecimal2}}</i></span>
           </div>
 
           <div class="details-item">
@@ -113,8 +113,11 @@ export default {
     
     profile () {
       return this.$store.state.account.profile
-    }
+    },
 
+    token () {
+      return this.$store.state.account.token
+    }
   },
 
   // 清空选中的现金券信息
@@ -164,9 +167,17 @@ export default {
     },
 
     handleBuy () {
-      const details = Object.assign({}, this.goodsDetails)
-      this.$store.commit('ADD_GOODS', details)
-      this.orderShow = true
+      if (this.token) {
+        const details = Object.assign({}, this.goodsDetails)
+        this.$store.commit('ADD_GOODS', details)
+        this.orderShow = true
+      } else {
+        this.$toast('您暂未登录，请授权登录')
+        this.$router.replace({
+          name: 'my',
+          params: {redirect: this.$route.path}
+        })
+      }
     },
 
     countChange () {

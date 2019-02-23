@@ -10,7 +10,7 @@
             <div class="logo">
               <img src="../../../assets/image/s_big.png" alt="">
             </div>
-            <h2 class="name">SHAVEDOG纯爷们1号清爽套餐</h2>
+            <h2 class="name">茬狗会员|订阅套餐</h2>
           </div>
           <div class="info">
             <div class="date">会员日期：{{item.startAt | formatDate}}至{{item.endAt | formatDate}}</div>

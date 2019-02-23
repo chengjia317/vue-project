@@ -75,7 +75,7 @@
               </div>
               <span class="name">邀请奖励</span>
             </div>
-            <div>已邀请 <i :class="{'color-primary': profile.invite}">{{profile.invite || 0}}</i> 人，已奖励 <i :class="{'color-primary': profile.reward}">{{profile.reward || 0}}</i> 元
+            <div>已邀请 <i :class="{'color-primary': profile.invite}">{{profile.invite || 0}}</i> 人，已奖励 <i :class="{'color-primary': profile.reward}">{{profile.reward | toDecimal0}}</i> 元
               <i class="op-icon-arrow"></i>
             </div>
           </router-link>
@@ -177,7 +177,9 @@ export default {
 
   mounted () {
     this.$op.isWeChatApplet().then(async res => {
-      this.isapp = res
+      if (res && (this.$op.isIPhoneX() || this.$op.isIPhoneXSMax() || this.$op.isIPhoneXR())) {
+        this.isapp = true
+      }
     })
     if (!this.scroll) {
       setTimeout(() => {
@@ -206,7 +208,7 @@ export default {
       this.$op.isWeChatApplet().then(res => {
         if (!res) {
           // 微信环境
-          getWechatLogin()
+          getWechatLogin(this.$route.params.redirect)
         } else {
           wx.miniProgram.navigateTo({url: '/pages/auth/auth'})
         }
@@ -248,6 +250,7 @@ export default {
   position: fixed;
   top: 0;
   bottom: 50px;
+  bottom: 50px + env(safe-area-inset-bottom);
 }
 .outer.is-weapp {
   bottom: 84px;

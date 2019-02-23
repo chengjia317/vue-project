@@ -1,1 +1,15 @@
 include: 'http://git.xiaoyanzhang.com/one-programmer/templates/raw/master/vue/.gitlab-ci.yml'
+
+variables:
+  PRO_URL: https://m.shavedog.net/
+
+
+pro1_deploy:
+  extends: .production_deploy
+  variables:
+    PRO_HOST: 39.98.54.9
+
+pro2_deploy:
+  extends: .production_deploy
+  variables:
+    PRO_HOST: 39.98.59.146

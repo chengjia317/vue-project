@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '@/store'
+import {wechatShare} from '@/api/wechat'
+import config from '@/config'
 // 路由数据
 import routes from './frame'
 import {Toast} from 'vant'
@@ -18,7 +20,6 @@ router.beforeEach(async (to, from, next) => {
   // 微信分享
   try {
     const wxConfigRouterNames = ['index', 'invite', 'supply_details', 'subscribe', 'my_order']
-    
     // 邀请朋友
     if (wxConfigRouterNames.indexOf(to.name) > -1) {
       console.log('get wechat config')
@@ -44,6 +45,14 @@ router.beforeEach(async (to, from, next) => {
         Vue.prototype.$wx_config = config
       }
     }
+    const shareImg = require('../assets/image/share.png')
+    let link = `${config.redirectUri}}`
+    wechatShare({
+      title: `茬狗-订阅会员式剃须刀`,
+      desc: `一年150元，12个刀头，免费到家。别再被大公司骗了。`,
+      link: link,
+      imgUrl: `${config.redirectUri}${shareImg}`,
+    })
   } catch (e) {
     console.log(e)
   }

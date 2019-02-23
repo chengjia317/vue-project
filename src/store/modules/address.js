@@ -1,5 +1,5 @@
 
-//import Vue from 'vue'
+import Vue from 'vue'
 import * as addressApi from '@/api/address.js'
 import { Toast } from 'vant'
 import { Dialog } from 'vant'
@@ -57,7 +57,7 @@ export default {
       Dialog.confirm({
         message: '确定要删除该地址吗？'
       }).then(async () => {
-      //  const data = await addressApi.deleteAddresses(id)
+        const data = await addressApi.deleteAddresses(id)
         Toast('删除成功')
         commit('DETETE_ADDRESS',id, index)
       }).catch(() => {})

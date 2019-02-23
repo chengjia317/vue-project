@@ -70,7 +70,8 @@ export default {
 
   created () {
     // 订阅无优惠券选择
-    if (this.$route.path !== '/subscribe') {
+    const token = this.$store.state.account.token
+    if (this.$route.path !== '/subscribe' && token) {
       this.$store.dispatch('getDiscountData')
     }
   },
